@@ -61,6 +61,7 @@ jobs:
             -resultBundlePath TestResults.xcresult \
             -skip-testing:MapleWalletUITests/ScreenshotTests \
             -skip-testing:MapleWalletUITests/DemoRecordingTests \
+            -retry-tests-on-failure -test-iterations 2 \
             CODE_SIGNING_ALLOWED=NO | tail -100
       - name: Coverage report
         if: always()

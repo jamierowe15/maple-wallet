@@ -1,7 +1,7 @@
 # ADR 0002: Concurrency model
 
 - **Status:** Accepted
-- **Date:** 2026-11-16
+- **Date:** 2026-11-17
 
 ## Context
 Swift 6 strict concurrency turns data races into compile errors. We need a clear rule for where mutable state lives so the compiler can prove the app is safe.

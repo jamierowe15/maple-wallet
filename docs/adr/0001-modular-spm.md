@@ -1,7 +1,7 @@
 # ADR 0001: Split the app into local Swift packages
 
 - **Status:** Accepted
-- **Date:** 2026-11-16
+- **Date:** 2026-11-17
 
 ## Context
 In a single app target every file can see every other file, so features slowly tangle together. Builds and tests always cover everything, which is slow, and nothing can be built off a Mac. The posting asks for modular, testable code managed with SPM.
