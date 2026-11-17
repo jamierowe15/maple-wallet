@@ -25,7 +25,9 @@ public struct BalanceCard: View {
         layout {
             VStack(alignment: .leading, spacing: Spacing.xs) {
                 Text(title).font(.headline).foregroundStyle(Palette.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
                 Text(subtitle).font(.subheadline).foregroundStyle(Palette.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             if !typeSize.isAccessibilitySize { Spacer(minLength: Spacing.s) }
             Text(balance)

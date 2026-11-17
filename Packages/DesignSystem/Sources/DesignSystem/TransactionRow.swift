@@ -32,7 +32,9 @@ public struct TransactionRow: View {
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: Spacing.xs) {
                     Text(merchant).font(.body).foregroundStyle(Palette.textPrimary)
+                        .fixedSize(horizontal: false, vertical: true)
                     Text(detail).font(.subheadline).foregroundStyle(Palette.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             if !typeSize.isAccessibilitySize { Spacer(minLength: Spacing.s) }

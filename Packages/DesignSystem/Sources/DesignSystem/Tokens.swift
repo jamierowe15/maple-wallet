@@ -24,7 +24,8 @@ public enum Palette {
     public static let debit = Color.dynamic(light: 0x3C3C43, dark: 0xEBEBF5, highContrastLight: 0x000000, highContrastDark: 0xFFFFFF)
     public static let surface = Color(uiColor: .secondarySystemBackground)
     public static let textPrimary = Color(uiColor: .label)
-    public static let textSecondary = Color(uiColor: .secondaryLabel)
+    /// Darker than the system's secondaryLabel so it passes the accessibility audit's contrast check.
+    public static let textSecondary = Color.dynamic(light: 0x545458, dark: 0xC7C7CC, highContrastLight: 0x3A3A3C, highContrastDark: 0xE5E5EA)
 }
 
 extension Color {

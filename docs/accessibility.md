@@ -24,6 +24,9 @@
 | Reduce Motion | Cross-fade instead of slide | `StepTransition`, `Animation.standard` |
 | Increase Contrast + Dark Mode | Four-variant dynamic colours | `Palette` in `Tokens.swift` |
 | Not colour alone | Sign + icon + colour for credit/debit | `TransactionRow` |
+| Readable secondary text | `Palette.textSecondary` is darker than the system grey (about 7:1 on white) | `Tokens.swift`, `SectionHeader` |
+| Links and buttons readable | App tint is the brand red (6:1 on white) instead of system blue (4:1) | `RootView` |
+| No truncated account names | Transfer pickers list each account as a full, wrapping row | `TransferView` |
 | Big tap targets | Buttons at least 50 points tall | `PrimaryButton` |
 
 ## Screens at AX5, in Dark Mode and on iPad
