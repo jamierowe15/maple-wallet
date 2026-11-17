@@ -1,0 +1,47 @@
+# Xcode project spec. Generate the .xcodeproj on a Mac with:  xcodegen generate
+name: MapleWallet
+options:
+  bundleIdPrefix: com.jamierowe
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+packages:
+  Core: { path: Packages/Core }
+  DesignSystem: { path: Packages/DesignSystem }
+  Networking: { path: Packages/Networking }
+  Auth: { path: Packages/Auth }
+  Accounts: { path: Packages/Accounts }
+  Transfers: { path: Packages/Transfers }
+targets:
+  MapleWallet:
+    type: application
+    platform: iOS
+    sources: [App]
+    info:
+      path: Config/MapleWallet-Info.plist
+      properties:
+        CFBundleDisplayName: Maple Wallet
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        CFBundleURLTypes:
+          - CFBundleURLName: com.jamierowe.maplewallet
+            CFBundleURLSchemes: [maplewallet]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.jamierowe.maplewallet
+        TARGETED_DEVICE_FAMILY: "1,2"
+    dependencies:
+      - package: Core
+      - package: DesignSystem
+      - package: Accounts
