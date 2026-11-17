@@ -1,17 +1,26 @@
 import Accounts
 import Core
+import Foundation
+import Networking
 
 /// The ONE place that knows which concrete types back each protocol.
-/// Features never create their own dependencies.
 @MainActor
 struct CompositionRoot {
     let accountsService: any AccountsService
+    let accountsCache: any AccountsCaching
 
     static func make() -> CompositionRoot {
-        CompositionRoot(accountsService: MockAccountsService())
+        let transport = LocalFixtureTransport(isOffline: { UserDefaults.standard.bool(forKey: "simulateOffline") })
+        let client = APIClient(baseURL: URL(string: "https://api.maplewallet.example")!, transport: transport)
+        return CompositionRoot(accountsService: RemoteAccountsService(client: client),
+                               accountsCache: FileAccountsCache())
     }
 
     func makeAccountsViewModel() -> AccountsViewModel {
-        AccountsViewModel(service: accountsService)
+        AccountsViewModel(service: accountsService, cache: accountsCache)
+    }
+
+    func makeAccountDetailViewModel(_ id: Account.ID) -> AccountDetailViewModel {
+        AccountDetailViewModel(accountID: id, service: accountsService)
     }
 }

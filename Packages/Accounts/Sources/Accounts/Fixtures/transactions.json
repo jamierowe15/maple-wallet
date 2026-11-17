@@ -1,0 +1,16 @@
+[
+  { "id": "t-100", "accountID": "chq-001", "merchant": "Payroll deposit", "category": "Income",
+    "amount": { "minorUnits": 215000, "currencyCode": "CAD" }, "date": "2026-11-01T09:00:00Z" },
+  { "id": "t-101", "accountID": "chq-001", "merchant": "Groceries", "category": "Food",
+    "amount": { "minorUnits": -4215, "currencyCode": "CAD" }, "date": "2026-10-31T17:20:00Z" },
+  { "id": "t-102", "accountID": "chq-001", "merchant": "TTC fare", "category": "Transit",
+    "amount": { "minorUnits": -330, "currencyCode": "CAD" }, "date": "2026-10-30T08:05:00Z" },
+  { "id": "t-103", "accountID": "chq-001", "merchant": "Coffee", "category": "Food",
+    "amount": { "minorUnits": -545, "currencyCode": "CAD" }, "date": "2026-10-29T08:30:00Z" },
+  { "id": "t-104", "accountID": "chq-001", "merchant": "Phone bill", "category": "Bills",
+    "amount": { "minorUnits": -6500, "currencyCode": "CAD" }, "date": "2026-10-28T12:00:00Z" },
+  { "id": "t-200", "accountID": "sav-002", "merchant": "Interest", "category": "Income",
+    "amount": { "minorUnits": 1804, "currencyCode": "CAD" }, "date": "2026-10-27T00:00:00Z" },
+  { "id": "t-300", "accountID": "cc-003", "merchant": "Bookstore", "category": "Shopping",
+    "amount": { "minorUnits": -6499, "currencyCode": "CAD" }, "date": "2026-10-31T15:45:00Z" }
+]

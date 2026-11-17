@@ -7,7 +7,8 @@ struct MapleWalletApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AccountsView(viewModel: root.makeAccountsViewModel())
+            AccountsView(viewModel: root.makeAccountsViewModel(),
+                         makeDetailViewModel: root.makeAccountDetailViewModel)
         }
     }
 }

@@ -3,17 +3,36 @@ import Core
 import DesignSystem
 import SwiftUI
 
+struct AccountRoute: Hashable {
+    let id: Account.ID
+}
+
 public struct AccountsView: View {
     @State private var viewModel: AccountsViewModel
+    private let makeDetailViewModel: @MainActor (Account.ID) -> AccountDetailViewModel
+    #if DEBUG
+    @AppStorage("simulateOffline") private var simulateOffline = false
+    #endif
 
-    public init(viewModel: AccountsViewModel) {
+    public init(viewModel: AccountsViewModel,
+                makeDetailViewModel: @escaping @MainActor (Account.ID) -> AccountDetailViewModel) {
         _viewModel = State(initialValue: viewModel)
+        self.makeDetailViewModel = makeDetailViewModel
     }
 
     public var body: some View {
         NavigationStack {
             content
                 .navigationTitle("Accounts")
+                .navigationDestination(for: AccountRoute.self) { route in
+                    AccountDetailView(viewModel: makeDetailViewModel(route.id))
+                }
+                #if DEBUG
+                .toolbar {
+                    Toggle(isOn: $simulateOffline) { Label("Simulate offline", systemImage: "wifi.slash") }
+                        .accessibilityHint("Debug only. Makes the fake server act offline.")
+                }
+                #endif
         }
         .task { await viewModel.load() }
     }
@@ -31,19 +50,27 @@ public struct AccountsView: View {
                 Task { await viewModel.load() }
             }
         case .loaded(let accounts):
-            List(accounts) { account in
-                BalanceCard(title: account.name,
-                            subtitle: "\(account.kind.rawValue.capitalized), ending in \(account.lastFour)",
-                            balance: account.balance.formatted())
+            List {
+                if let lastUpdated = viewModel.lastUpdated {
+                    Label("Offline. Showing balances from \(lastUpdated.formatted(date: .omitted, time: .shortened)).",
+                          systemImage: "wifi.slash")
+                        .font(.footnote)
+                        .foregroundStyle(Palette.textSecondary)
+                        .listRowSeparator(.hidden)
+                }
+                ForEach(accounts) { account in
+                    NavigationLink(value: AccountRoute(id: account.id)) {
+                        BalanceCard(title: account.name,
+                                    subtitle: "\(account.kind.rawValue.capitalized), ending in \(account.lastFour)",
+                                    balance: account.balance.formatted())
+                    }
                     .listRowSeparator(.hidden)
                     .accessibilityIdentifier("accounts.row.\(account.id)")
+                }
             }
             .listStyle(.plain)
+            .refreshable { await viewModel.load() }
         }
     }
 }
-
-#if DEBUG
-#Preview { AccountsView(viewModel: AccountsViewModel(service: MockAccountsService())) }
-#endif
 #endif
