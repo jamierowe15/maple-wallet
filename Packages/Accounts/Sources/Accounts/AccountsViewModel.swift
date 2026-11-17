@@ -13,21 +13,36 @@ public final class AccountsViewModel {
     }
 
     public private(set) var state: State = .idle
-    private let service: any AccountsService
+    /// Set when we're showing cached data because the network failed.
+    public private(set) var lastUpdated: Date?
 
-    public init(service: any AccountsService) {
+    private let service: any AccountsService
+    private let cache: (any AccountsCaching)?
+
+    public init(service: any AccountsService, cache: (any AccountsCaching)? = nil) {
         self.service = service
+        self.cache = cache
     }
 
     public func load() async {
-        state = .loading
+        if case .loaded = state {} else { state = .loading }
         do {
             let accounts = try await service.fetchAccounts()
+            await cache?.save(accounts)
+            lastUpdated = nil
             state = accounts.isEmpty ? .empty : .loaded(accounts)
         } catch {
             // Cancelled (user left the screen): go quiet, never show an error.
-            guard let friendly = UserFacingError.from(error) else { state = .idle; return }
-            state = .failed(friendly)
+            guard let friendly = UserFacingError.from(error) else {
+                if case .loading = state { state = .idle }
+                return
+            }
+            if let cached = await cache?.load(), !cached.accounts.isEmpty {
+                state = .loaded(cached.accounts)
+                lastUpdated = cached.savedAt
+            } else {
+                state = .failed(friendly)
+            }
         }
     }
 }

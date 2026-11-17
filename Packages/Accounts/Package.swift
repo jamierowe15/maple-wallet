@@ -8,9 +8,14 @@ let package = Package(
     dependencies: [
         .package(path: "../Core"),
         .package(path: "../DesignSystem"),
+        .package(path: "../Networking"),
     ],
     targets: [
-        .target(name: "Accounts", dependencies: ["Core", "DesignSystem"]),
-        .testTarget(name: "AccountsTests", dependencies: ["Accounts", "Core"]),
+        .target(
+            name: "Accounts",
+            dependencies: ["Core", "DesignSystem", "Networking"],
+            resources: [.process("Fixtures")]
+        ),
+        .testTarget(name: "AccountsTests", dependencies: ["Accounts", "Core", "Networking"]),
     ]
 )

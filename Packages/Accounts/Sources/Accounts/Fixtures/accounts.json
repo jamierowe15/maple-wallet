@@ -1,0 +1,8 @@
+[
+  { "id": "chq-001", "name": "Everyday Chequing", "kind": "chequing", "lastFour": "4821",
+    "balance": { "minorUnits": 123456, "currencyCode": "CAD" } },
+  { "id": "sav-002", "name": "High Interest Savings", "kind": "savings", "lastFour": "1177",
+    "balance": { "minorUnits": 825000, "currencyCode": "CAD" } },
+  { "id": "cc-003", "name": "Maple Rewards Visa", "kind": "credit", "lastFour": "9034",
+    "balance": { "minorUnits": -41289, "currencyCode": "CAD" } }
+]
