@@ -12,6 +12,16 @@ DD="$ROOT/.dd"
 SHOTS="$HOME/maple-shots"   # UI tests write here through SIMULATOR_HOST_HOME
 WHAT="${1:-all}"
 mkdir -p "$OUT/images" "$OUT/traces" "$SHOTS"
+# Kill a command if it runs longer than $1 seconds (macOS has no `timeout`).
+run_with_timeout() {
+  local secs=$1; shift
+  "$@" & local pid=$!
+  ( sleep "$secs"; kill -INT "$pid" 2>/dev/null; sleep 15; kill -KILL "$pid" 2>/dev/null ) &
+  local watcher=$!
+  wait "$pid"; local rc=$?
+  kill "$watcher" 2>/dev/null
+  return $rc
+}
 
 log() { printf '\n==> %s\n' "$*"; }
 
@@ -142,7 +152,7 @@ traces() {
   for template in "Leaks" "Time Profiler"; do
     local slug; slug="$(echo "$template" | tr ' ' '-' | tr '[:upper:]' '[:lower:]')"
     log "Instruments: $template"
-    xcrun xctrace record --template "$template" --device "$IPHONE" --time-limit 15s \
+    run_with_timeout 180 xcrun xctrace record --template "$template" --device "$IPHONE" --time-limit 15s \
       --output "$OUT/traces/$slug.trace" --launch -- "$app" -uiTesting \
       > "$OUT/traces/$slug.log" 2>&1 || echo "xctrace $template failed (see traces/$slug.log)"
   done

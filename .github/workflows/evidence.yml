@@ -10,16 +10,17 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install tools
         run: brew install xcodegen ffmpeg
       - name: Generate Xcode project
         run: xcodegen generate
       - name: Produce evidence
+        timeout-minutes: 40
         run: bash scripts/ci/evidence.sh all
       - name: Upload evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: evidence
           path: evidence/
