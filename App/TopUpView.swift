@@ -69,20 +69,21 @@ final class ApplePayCoordinator: NSObject, PKPaymentAuthorizationControllerDeleg
         }
     }
 
-    nonisolated func paymentAuthorizationController(
+    // Apple calls these on the main actor, the same isolation as this class,
+    // so Apple Pay's (non-Sendable) objects never cross threads.
+    func paymentAuthorizationController(
         _ controller: PKPaymentAuthorizationController,
         didAuthorizePayment payment: PKPayment
     ) async -> PKPaymentAuthorizationResult {
-        let accepted = await DemoPaymentServer.charge(token: payment.token.paymentData)
-        await MainActor.run { self.succeeded = accepted }
+        let token = payment.token.paymentData // Data is Sendable
+        let accepted = await DemoPaymentServer.charge(token: token)
+        succeeded = accepted
         return PKPaymentAuthorizationResult(status: accepted ? .success : .failure, errors: nil)
     }
 
-    nonisolated func paymentAuthorizationControllerDidFinish(_ controller: PKPaymentAuthorizationController) {
-        Task { @MainActor in
-            self.controller?.dismiss(completion: nil)
-            self.finish()
-        }
+    func paymentAuthorizationControllerDidFinish(_ controller: PKPaymentAuthorizationController) {
+        controller.dismiss(completion: nil)
+        finish()
     }
 
     private func finish() {
