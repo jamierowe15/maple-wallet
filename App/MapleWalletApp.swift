@@ -1,4 +1,3 @@
-import Accounts
 import SwiftUI
 
 @main
@@ -7,8 +6,7 @@ struct MapleWalletApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AccountsView(viewModel: root.makeAccountsViewModel(),
-                         makeDetailViewModel: root.makeAccountDetailViewModel)
+            RootView(root: root)
         }
     }
 }
