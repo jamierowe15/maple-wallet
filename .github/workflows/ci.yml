@@ -1,0 +1,37 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  packages:
+    name: packages
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test Swift packages
+        run: |
+          for p in Packages/*/; do
+            if [ -d "$p/Tests" ]; then
+              echo "::group::$p"
+              (cd "$p" && swift test)
+              echo "::endgroup::"
+            fi
+          done
+
+  app:
+    name: app
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        run: xcodegen generate
+      - name: Build for iOS Simulator
+        run: |
+          set -o pipefail
+          xcodebuild build -project MapleWallet.xcodeproj -scheme MapleWallet \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO | tail -50
