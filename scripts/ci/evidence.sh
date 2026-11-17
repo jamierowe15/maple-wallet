@@ -114,7 +114,7 @@ audit() {
 
 coverage() {
   log "Package tests and coverage"
-  COVERAGE_MD="$OUT/coverage.md" scripts/run_package_tests.sh > "$OUT/package-tests.log" 2>&1 \
+  COVERAGE_MD="$OUT/coverage.md" bash scripts/run_package_tests.sh > "$OUT/package-tests.log" 2>&1 \
     || echo "Some package tests or the coverage gate failed: see evidence/package-tests.log"
 }
 

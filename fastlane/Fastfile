@@ -19,12 +19,12 @@ platform :ios do
 
   desc "Light, dark, AX5 and iPad screenshots (UITests/ScreenshotTests via simctl)"
   lane :screenshots do
-    sh("cd .. && scripts/ci/evidence.sh shots")
+    sh("cd .. && bash scripts/ci/evidence.sh shots")
   end
 
   desc "Everything: screenshots, GIF recordings, accessibility audit, coverage, Instruments traces"
   lane :evidence do
-    sh("cd .. && scripts/ci/evidence.sh all")
+    sh("cd .. && bash scripts/ci/evidence.sh all")
   end
 
   desc "Build and upload to TestFlight (needs a paid Apple Developer account)"

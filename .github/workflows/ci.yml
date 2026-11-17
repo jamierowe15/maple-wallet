@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Swift package tests + coverage gate (70% on Networking, Auth, Accounts)
-        run: COVERAGE_MD=coverage.md scripts/run_package_tests.sh
+        run: COVERAGE_MD=coverage.md bash scripts/run_package_tests.sh
       - name: Coverage summary
         if: always()
         run: cat coverage.md >> "$GITHUB_STEP_SUMMARY" || true
