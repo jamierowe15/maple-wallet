@@ -4,7 +4,7 @@ Users sign in through a system web session with PKCE, tokens live only in the Ke
 
 ## Recording: sign in, silent refresh, sign out
 <!-- auto:recording-sso -->
-_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
+<img src="images/sso-refresh.gif" width="320" alt="Sign in, silent token refresh, sign out">
 <!-- /auto:recording-sso -->
 
 The demo uses a short token lifetime (`-tokenLifetime 8`). The debug row on the More tab shows the token number change from `stub-access-0` to `stub-access-1` after the silent refresh.

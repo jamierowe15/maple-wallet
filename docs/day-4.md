@@ -4,12 +4,14 @@ A VoiceOver user can sign in, check a balance and send a transfer, and the app a
 
 ## Screenshots: Dark Mode, AX5 text and iPad
 <!-- auto:screens-day4 -->
-_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
+| Accounts at AX5 text | Transfer at AX5 text | Detail, Dark Mode |
+|---|---|---|
+| <img src="images/ax5-02-accounts.png" width="220" alt="Accounts at AX5 text"> | <img src="images/ax5-04-transfer.png" width="220" alt="Transfer at AX5 text"> | <img src="images/dark-03-account-detail.png" width="220" alt="Detail, Dark Mode"> |
 <!-- /auto:screens-day4 -->
 
 ## Recording: the main flow
 <!-- auto:recording-main -->
-_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
+<img src="images/demo.gif" width="320" alt="Sign in, open an account, send a transfer">
 <!-- /auto:recording-main -->
 
 ## Push notifications in the Simulator
