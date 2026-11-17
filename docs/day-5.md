@@ -30,7 +30,7 @@ The gate (`scripts/check_coverage.py`) fails CI if `Networking`, `Auth` or `Acco
 
 ## Instruments traces
 <!-- auto:traces -->
-Recorded automatically on a Simulator: `leaks.trace`. Open them on a Mac with Instruments.
+_Not generated yet. Run `bash maple-wallet-lab.sh evidence`._
 <!-- /auto:traces -->
 
 ## CI
