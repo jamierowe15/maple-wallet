@@ -20,16 +20,17 @@ final class AppLock {
     }
 
     func unlock() async {
+        isLocked = !(await Self.authenticate())
+    }
+
+    /// Face ID with passcode fallback. The LAContext is created and used on one thread only.
+    /// No biometrics or passcode set up on the device: nothing to check, so it unlocks.
+    nonisolated private static func authenticate() async -> Bool {
         let context = LAContext()
         var error: NSError?
-        // Face ID with passcode fallback. No biometrics or passcode set up: nothing to check.
-        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
-            isLocked = false
-            return
-        }
-        let passed = (try? await context.evaluatePolicy(.deviceOwnerAuthentication,
-                                                        localizedReason: "Unlock Maple Wallet")) ?? false
-        isLocked = !passed
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else { return true }
+        return (try? await context.evaluatePolicy(.deviceOwnerAuthentication,
+                                                  localizedReason: "Unlock Maple Wallet")) ?? false
     }
 }
 

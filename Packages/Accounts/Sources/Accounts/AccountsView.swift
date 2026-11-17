@@ -8,7 +8,7 @@ public struct AccountsView: View {
     @State private var viewModel: AccountsViewModel
     @Binding private var selection: Account.ID?
     private let makeDetailViewModel: @MainActor (Account.ID) -> AccountDetailViewModel
-    private let onRepeatTransfer: @MainActor (Transaction) -> Void
+    private let onRepeatTransfer: @MainActor (Core.Transaction) -> Void
     #if DEBUG
     @AppStorage("simulateOffline") private var simulateOffline = false
     #endif
@@ -16,7 +16,7 @@ public struct AccountsView: View {
     public init(viewModel: AccountsViewModel,
                 selection: Binding<Account.ID?>,
                 makeDetailViewModel: @escaping @MainActor (Account.ID) -> AccountDetailViewModel,
-                onRepeatTransfer: @escaping @MainActor (Transaction) -> Void) {
+                onRepeatTransfer: @escaping @MainActor (Core.Transaction) -> Void) {
         _viewModel = State(initialValue: viewModel)
         _selection = selection
         self.makeDetailViewModel = makeDetailViewModel

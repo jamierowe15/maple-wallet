@@ -81,5 +81,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jamierowe.maplewallet.widget
         TARGETED_DEVICE_FAMILY: "1,2"
+        # WidgetKit's callback-based provider API predates Swift 6 checking; the app itself stays in Swift 6.
+        SWIFT_VERSION: "5.0"
+        SWIFT_STRICT_CONCURRENCY: minimal
     dependencies:
       - package: Core

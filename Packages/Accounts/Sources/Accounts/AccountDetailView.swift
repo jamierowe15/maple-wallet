@@ -6,9 +6,9 @@ import SwiftUI
 public struct AccountDetailView: View {
     @State private var viewModel: AccountDetailViewModel
     @StateObject private var search = TransactionSearch()
-    private let onRepeatTransfer: @MainActor (Transaction) -> Void
+    private let onRepeatTransfer: @MainActor (Core.Transaction) -> Void
 
-    public init(viewModel: AccountDetailViewModel, onRepeatTransfer: @escaping @MainActor (Transaction) -> Void = { _ in }) {
+    public init(viewModel: AccountDetailViewModel, onRepeatTransfer: @escaping @MainActor (Core.Transaction) -> Void = { _ in }) {
         _viewModel = State(initialValue: viewModel)
         self.onRepeatTransfer = onRepeatTransfer
     }
