@@ -4,7 +4,7 @@ The Accounts screen loads from a REST API, keeps working offline with cached dat
 
 ## Recording: offline cache
 <!-- auto:recording-offline -->
-<img src="images/offline.gif" width="320" alt="Offline: cached balances with a banner">
+_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
 <!-- /auto:recording-offline -->
 
 ## How a request flows

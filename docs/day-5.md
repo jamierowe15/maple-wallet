@@ -4,13 +4,7 @@ Every push runs lint, unit, integration and UI tests with a 70% coverage gate on
 
 ## Coverage
 <!-- auto:coverage -->
-| Package | Line coverage | Lines | Gate |
-|---|---|---|---|
-| Core | 78.9% | 128 | report only |
-| Networking | 87.4% | 191 | PASS (min 70%) |
-| Auth | 84.8% | 276 | PASS (min 70%) |
-| Accounts | 82.6% | 219 | PASS (min 70%) |
-| Transfers | 82.5% | 63 | report only |
+_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
 <!-- /auto:coverage -->
 
 The gate (`scripts/check_coverage.py`) fails CI if `Networking`, `Auth` or `Accounts` drop below 70% line coverage.
@@ -30,7 +24,7 @@ The gate (`scripts/check_coverage.py`) fails CI if `Networking`, `Auth` or `Acco
 
 ## Instruments traces
 <!-- auto:traces -->
-_Not generated yet. Run `bash maple-wallet-lab.sh evidence`._
+_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
 <!-- /auto:traces -->
 
 ## CI
@@ -41,7 +35,7 @@ _Not generated yet. Run `bash maple-wallet-lab.sh evidence`._
 
 ### Proof that CI blocks a broken test
 <!-- auto:ci-proof -->
-[This throwaway pull request](https://github.com/jamierowe15/maple-wallet/pull/6) added a deliberately failing test. CI went red and GitHub blocked the merge, so the PR was closed unmerged.
+_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
 <!-- /auto:ci-proof -->
 
 ## fastlane
