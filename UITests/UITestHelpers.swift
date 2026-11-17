@@ -21,6 +21,17 @@ func pullToRefresh(from element: XCUIElement) {
     start.press(forDuration: 0.1, thenDragTo: start.withOffset(CGVector(dx: 0, dy: 360)))
 }
 
+/// Swipes up until the element is on screen (long lists only create rows near the screen).
+@discardableResult
+func scrollTo(_ app: XCUIApplication, _ element: XCUIElement, maxSwipes: Int = 8) -> Bool {
+    var swipes = 0
+    while !(element.exists && element.isHittable) && swipes < maxSwipes {
+        app.swipeUp()
+        swipes += 1
+    }
+    return element.exists
+}
+
 /// Slows tests down only while a demo is being recorded (TEST_RUNNER_DEMO_PACE=1).
 func demoPause(_ seconds: UInt32 = 1) {
     if ProcessInfo.processInfo.environment["DEMO_PACE"] != nil { sleep(seconds) }

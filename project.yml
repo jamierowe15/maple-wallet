@@ -173,3 +173,32 @@ schemes:
       gatherCoverageData: true
       coverageTargets: [MapleWallet]
       targets: [MapleWalletUITests]
+
+  MapleWalletUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.jamierowe.maplewallet.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TARGETED_DEVICE_FAMILY: "1,2"
+        # UI tests drive the app from outside; Swift 5 mode keeps XCUITest's older APIs simple.
+        SWIFT_VERSION: "5.0"
+        SWIFT_STRICT_CONCURRENCY: minimal
+    dependencies:
+      - target: MapleWallet
+
+schemes:
+  MapleWallet:
+    build:
+      targets:
+        MapleWallet: all
+        MapleWalletUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      coverageTargets: [MapleWallet]
+      targets: [MapleWalletUITests]

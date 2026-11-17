@@ -49,8 +49,9 @@ final class MainFlowUITests: XCTestCase {
         app.buttons["signIn.button"].tap()
         XCTAssertTrue(element(app, "accounts.row.chq-001").waitForExistence(timeout: 10))
         openTab(app, "More")
+        XCTAssertTrue(app.navigationBars["More"].waitForExistence(timeout: 10))
         let signOut = app.buttons["more.signOut"]
-        XCTAssertTrue(signOut.waitForExistence(timeout: 10))
+        XCTAssertTrue(scrollTo(app, signOut), "Sign out button not found on the More screen")
         signOut.tap()
         XCTAssertTrue(app.buttons["signIn.button"].waitForExistence(timeout: 10))
     }
