@@ -1,7 +1,7 @@
 # ADR 0003: OAuth Authorization Code + PKCE, tokens in the Keychain
 
 - **Status:** Accepted
-- **Date:** 2026-11-16
+- **Date:** 2026-11-17
 
 ## Context
 The app must sign users in without ever seeing their password or shipping a client secret, support single sign-on, and keep tokens safe on a lost or stolen phone.

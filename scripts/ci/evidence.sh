@@ -53,11 +53,25 @@ build() {
 }
 
 # run_test <udid> <TestClass[/testMethod]> [VAR=value ...]
-run_test() {
+# GitHub's Mac simulators sometimes fail to launch an app ("Timed out while launching
+# application", "failed to bless service hub"). Each test gets at most 5 minutes, and a
+# failed run is retried once on a freshly rebooted simulator.
+run_once() {
   local udid="$1" test="$2"; shift 2
   env "$@" xcodebuild test-without-building -project MapleWallet.xcodeproj -scheme MapleWallet \
     -destination "id=$udid" -derivedDataPath "$DD" -only-testing:"MapleWalletUITests/$test" \
+    -test-timeouts-enabled YES -default-test-execution-time-allowance 300 -maximum-test-execution-time-allowance 300 \
     CODE_SIGNING_ALLOWED=NO >> "$OUT/ui-tests.log" 2>&1
+}
+
+# run_test <udid> <TestClass[/testMethod]> [VAR=value ...]
+run_test() {
+  local udid="$1" test="$2"; shift 2
+  run_once "$udid" "$test" "$@" && return 0
+  echo "  $test failed; rebooting the simulator and trying once more"
+  xcrun simctl shutdown "$udid" 2>/dev/null || true
+  boot "$udid"
+  run_once "$udid" "$test" "$@"
 }
 
 shots() {
@@ -135,7 +149,7 @@ traces() {
 }
 
 case "$WHAT" in
-  all) coverage; shots; record; audit; traces ;;
+  all) coverage; shots; audit; record; traces ;;
   shots|record|audit|coverage|traces) "$WHAT" ;;
   *) echo "Usage: $0 [all|shots|record|audit|coverage|traces]"; exit 2 ;;
 esac
