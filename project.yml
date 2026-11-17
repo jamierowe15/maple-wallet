@@ -11,6 +11,9 @@ settings:
     SWIFT_STRICT_CONCURRENCY: complete
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
+configFiles:
+  Debug: Config/Auth.xcconfig
+  Release: Config/Auth.xcconfig
 packages:
   Core: { path: Packages/Core }
   DesignSystem: { path: Packages/DesignSystem }
@@ -37,6 +40,10 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLName: com.jamierowe.maplewallet
             CFBundleURLSchemes: [maplewallet]
+        AUTH0_DOMAIN: $(AUTH0_DOMAIN)
+        AUTH0_CLIENT_ID: $(AUTH0_CLIENT_ID)
+        NSFaceIDUsageDescription: Use Face ID to unlock Maple Wallet instead of signing in each time.
+        NSCameraUsageDescription: Take a photo of a cheque to deposit it.
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jamierowe.maplewallet
@@ -45,4 +52,5 @@ targets:
       - package: Core
       - package: DesignSystem
       - package: Networking
+      - package: Auth
       - package: Accounts

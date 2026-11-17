@@ -10,24 +10,37 @@ public struct CachedAccounts: Sendable, Codable, Equatable {
 public protocol AccountsCaching: Sendable {
     func save(_ accounts: [Account]) async
     func load() async -> CachedAccounts?
+    func clear() async
 }
 
-/// Stores the last response as a JSON file.
+/// Stores the last response as an encrypted-at-rest JSON file that's excluded from backups.
 public actor FileAccountsCache: AccountsCaching {
     private let fileURL: URL
 
     public init(fileURL: URL? = nil) {
-        self.fileURL = fileURL ?? FileManager.default
-            .urls(for: .cachesDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent("accounts-cache.json")
+        if let fileURL {
+            self.fileURL = fileURL
+        } else {
+            let folder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            self.fileURL = folder.appendingPathComponent("accounts-cache.json")
+        }
     }
 
     public func save(_ accounts: [Account]) async {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
         guard let data = try? encoder.encode(CachedAccounts(accounts: accounts, savedAt: Date())) else { return }
-        // A failed cache write is ignored on purpose: the cache is a convenience, and the next good load tries again.
+        #if os(iOS)
+        // Unreadable while the device is locked.
+        try? data.write(to: fileURL, options: [.atomic, .completeFileProtection])
+        var url = fileURL
+        var values = URLResourceValues()
+        values.isExcludedFromBackup = true
+        try? url.setResourceValues(values)
+        #else
         try? data.write(to: fileURL, options: [.atomic])
+        #endif
     }
 
     public func load() async -> CachedAccounts? {
@@ -35,6 +48,10 @@ public actor FileAccountsCache: AccountsCaching {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return try? decoder.decode(CachedAccounts.self, from: data)
+    }
+
+    public func clear() async {
+        try? FileManager.default.removeItem(at: fileURL)
     }
 }
 
@@ -51,4 +68,5 @@ public actor InMemoryAccountsCache: AccountsCaching {
     }
 
     public func load() async -> CachedAccounts? { cached }
+    public func clear() async { cached = nil }
 }
