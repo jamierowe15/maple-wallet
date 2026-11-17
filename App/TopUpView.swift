@@ -13,10 +13,10 @@ struct TopUpView: View {
 
     var body: some View {
         Form {
-            Section("Amount") {
+            Section {
                 TextField("Amount", text: $amountText)
                     .keyboardType(.decimalPad)
-            }
+            } header: { SectionHeader("Amount") }
             Section {
                 if PKPaymentAuthorizationController.canMakePayments(usingNetworks: networks) {
                     PayWithApplePayButton(.topUp) { startPayment() }

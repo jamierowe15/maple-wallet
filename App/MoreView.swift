@@ -16,19 +16,19 @@ struct MoreView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Help") {
+                Section {
                     Button("Help centre") { showHelp = true }
-                }
-                Section("Banking") {
+                } header: { SectionHeader("Help") }
+                Section {
                     NavigationLink("Statements") { StatementsScreen(tokenProvider: tokenProvider) }
                     NavigationLink("Top up with Apple Pay") { TopUpView() }
                     NavigationLink("Deposit a cheque") { DepositChequeView() }
-                }
-                Section("Security") {
+                } header: { SectionHeader("Banking") }
+                Section {
                     Toggle("Require Face ID to open", isOn: $appLock.isEnabled)
                         .accessibilityIdentifier("more.faceIDToggle")
-                }
-                Section("Notifications") {
+                } header: { SectionHeader("Security") }
+                Section {
                     Button("Turn on transfer alerts") {
                         Task {
                             let granted = (try? await UNUserNotificationCenter.current()
@@ -36,15 +36,20 @@ struct MoreView: View {
                             notificationsStatus = granted ? "On" : "Off. You can change this in Settings."
                         }
                     }
-                    LabeledContent("Status", value: notificationsStatus)
-                }
+                    LabeledContent("Status") {
+                        Text(notificationsStatus).foregroundStyle(Palette.textSecondary)
+                    }
+                } header: { SectionHeader("Notifications") }
                 #if DEBUG
-                Section("Debug") {
-                    LabeledContent("Access token", value: currentToken)
-                        .accessibilityIdentifier("debug.tokenLabel")
+                Section {
+                    LabeledContent("Access token") {
+                        Text(currentToken).foregroundStyle(Palette.textSecondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("debug.tokenLabel")
                     Button("Check token") { Task { await refreshTokenLabel() } }
                         .accessibilityIdentifier("debug.checkToken")
-                }
+                } header: { SectionHeader("Debug") }
                 #endif
                 Section {
                     Button("Sign out", role: .destructive) { Task { await session.signOut() } }

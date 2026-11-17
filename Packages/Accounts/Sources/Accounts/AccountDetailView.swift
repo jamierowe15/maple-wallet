@@ -61,7 +61,7 @@ public struct AccountDetailView: View {
                             }
                     }
                 } header: {
-                    Text("Transactions").accessibilityAddTraits(.isHeader)
+                    SectionHeader("Transactions")
                 }
             }
             .searchable(text: $search.query, prompt: "Search transactions")

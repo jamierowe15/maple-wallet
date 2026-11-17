@@ -29,6 +29,7 @@ struct RootView: View {
 
     var body: some View {
         content
+            .tint(Palette.brand) // system blue is below 4.5:1 contrast on white; the brand red passes
             .privacyShield(isActive: scenePhase != .active && session.phase == .signedIn)
             .overlay {
                 if appLock.isLocked && session.phase == .signedIn { LockView(appLock: appLock) }

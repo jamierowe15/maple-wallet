@@ -9,6 +9,7 @@ public struct AccountsView: View {
     @Binding private var selection: Account.ID?
     private let makeDetailViewModel: @MainActor (Account.ID) -> AccountDetailViewModel
     private let onRepeatTransfer: @MainActor (Core.Transaction) -> Void
+    @State private var columns: NavigationSplitViewVisibility = .all
     #if DEBUG
     @AppStorage("simulateOffline") private var simulateOffline = false
     #endif
@@ -24,7 +25,7 @@ public struct AccountsView: View {
     }
 
     public var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columns) {
             sidebar
                 .navigationTitle("Accounts")
                 #if DEBUG
@@ -45,6 +46,7 @@ public struct AccountsView: View {
                                systemImage: "sidebar.left")
             }
         }
+        .navigationSplitViewStyle(.balanced) // iPad portrait too: list and detail side by side
         .task { await viewModel.load() }
     }
 

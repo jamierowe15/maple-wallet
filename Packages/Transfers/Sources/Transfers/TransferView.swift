@@ -35,24 +35,31 @@ public struct TransferView: View {
 
     private var form: some View {
         Form {
-            Section("From") {
+            // Inline pickers list every account as a full row, so long names wrap
+            // instead of being cut to "Ever...34.56" at large text sizes.
+            Section {
                 Picker("From account", selection: $viewModel.fromID) {
                     ForEach(viewModel.accounts) { account in
-                        Text("\(account.name), \(account.balance.formatted())").tag(Optional(account.id))
+                        AccountOption(account: account).tag(Optional(account.id))
                     }
                 }
+                .pickerStyle(.inline)
+                .labelsHidden()
                 .accessibilityIdentifier("transfer.from")
-            }
-            Section("To") {
+            } header: { SectionHeader("From") }
+            Section {
                 Picker("To account", selection: $viewModel.toID) {
                     ForEach(viewModel.accounts) { account in
-                        Text(account.name).tag(Optional(account.id))
+                        AccountOption(account: account).tag(Optional(account.id))
                     }
                 }
+                .pickerStyle(.inline)
+                .labelsHidden()
                 .accessibilityIdentifier("transfer.to")
-            }
-            Section("Amount") {
-                TextField("Amount in dollars", text: $viewModel.amountText)
+            } header: { SectionHeader("To") }
+            Section {
+                TextField("Amount in dollars", text: $viewModel.amountText,
+                          prompt: Text("Amount in dollars").foregroundStyle(Palette.textSecondary))
                     .keyboardType(.decimalPad)
                     .focused($amountFocused)
                     .accessibilityIdentifier("transfer.amount")
@@ -61,7 +68,7 @@ public struct TransferView: View {
                         .font(.footnote)
                         .foregroundStyle(Palette.brand)
                 }
-            }
+            } header: { SectionHeader("Amount") }
             Section {
                 PrimaryButton("Review transfer") {
                     amountFocused = false
@@ -80,10 +87,11 @@ public struct TransferView: View {
                 Text("Review transfer")
                     .font(.title2.bold())
                     .accessibilityAddTraits(.isHeader)
-                LabeledContent("From", value: viewModel.from?.name ?? "")
-                LabeledContent("To", value: viewModel.to?.name ?? "")
+                LabeledContent("From") { Text(viewModel.from?.name ?? "").foregroundStyle(Palette.textPrimary) }
+                LabeledContent("To") { Text(viewModel.to?.name ?? "").foregroundStyle(Palette.textPrimary) }
                 LabeledContent("Amount") {
                     Text(viewModel.amount?.formatted() ?? "")
+                        .foregroundStyle(Palette.textPrimary)
                         .accessibilityLabel(viewModel.amount?.spokenDescription() ?? "")
                 }
                 PrimaryButton("Confirm transfer", isLoading: viewModel.phase == .submitting) {
@@ -118,6 +126,23 @@ public struct TransferView: View {
         case .done: AccessibilityNotification.Announcement("Transfer sent").post()
         case .failed(let error): AccessibilityNotification.Announcement("Transfer failed. \(error.message)").post()
         default: break
+        }
+    }
+}
+
+/// One account in the From/To pickers: name, then balance on its own line.
+private struct AccountOption: View {
+    let account: Account
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.xs) {
+            Text(account.name)
+                .foregroundStyle(Palette.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+            Text("Balance \(account.balance.formatted())")
+                .font(.subheadline)
+                .foregroundStyle(Palette.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
