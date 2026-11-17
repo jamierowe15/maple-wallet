@@ -44,6 +44,12 @@ targets:
         AUTH0_CLIENT_ID: $(AUTH0_CLIENT_ID)
         NSFaceIDUsageDescription: Use Face ID to unlock Maple Wallet instead of signing in each time.
         NSCameraUsageDescription: Take a photo of a cheque to deposit it.
+    entitlements:
+      path: Config/MapleWallet.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.jamierowe.maplewallet]
+        # Universal Links need a paid account and a domain you control. Uncomment when you have both:
+        # com.apple.developer.associated-domains: [applinks:maplewallet.example]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.jamierowe.maplewallet
@@ -54,3 +60,29 @@ targets:
       - package: Networking
       - package: Auth
       - package: Accounts
+      - package: Transfers
+      - target: MapleWalletWidget
+
+  MapleWalletWidget:
+    type: app-extension
+    platform: iOS
+    sources: [Widget]
+    info:
+      path: Config/MapleWalletWidget-Info.plist
+      properties:
+        CFBundleDisplayName: Maple Wallet
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: Config/MapleWalletWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.jamierowe.maplewallet]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.jamierowe.maplewallet.widget
+        TARGETED_DEVICE_FAMILY: "1,2"
+        # WidgetKit's callback-based provider API predates Swift 6 checking; the app itself stays in Swift 6.
+        SWIFT_VERSION: "5.0"
+        SWIFT_STRICT_CONCURRENCY: minimal
+    dependencies:
+      - package: Core
