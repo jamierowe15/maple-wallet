@@ -6,7 +6,7 @@
 Fictional brand, fake data, no real money.
 
 <!-- auto:demo -->
-_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
+<img src="docs/images/demo.gif" width="280" alt="Maple Wallet demo">
 <!-- /auto:demo -->
 
 ## Architecture
@@ -43,7 +43,13 @@ scripts/run_package_tests.sh    # any OS with Swift: logic tests + coverage gate
 
 ## Tests and coverage
 <!-- auto:coverage -->
-_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
+| Package | Line coverage | Lines | Gate |
+|---|---|---|---|
+| Core | 78.9% | 128 | report only |
+| Networking | 87.4% | 191 | PASS (min 70%) |
+| Auth | 84.8% | 276 | PASS (min 70%) |
+| Accounts | 82.6% | 219 | PASS (min 70%) |
+| Transfers | 82.5% | 63 | report only |
 <!-- /auto:coverage -->
 
 ## Docs

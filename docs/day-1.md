@@ -21,7 +21,9 @@ Only `App/CompositionRoot.swift` knows the concrete types.
 
 ## Screenshots
 <!-- auto:screens-day1 -->
-_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
+| Accounts, light | Accounts, dark | Account detail |
+|---|---|---|
+| <img src="images/light-02-accounts.png" width="220" alt="Accounts, light"> | <img src="images/dark-02-accounts.png" width="220" alt="Accounts, dark"> | <img src="images/light-03-account-detail.png" width="220" alt="Account detail"> |
 <!-- /auto:screens-day1 -->
 
 ## Modern Swift features used
