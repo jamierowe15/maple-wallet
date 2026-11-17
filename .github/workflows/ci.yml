@@ -4,20 +4,36 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   packages:
     name: packages
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Test Swift packages
+      - name: Swift package tests + coverage gate (70% on Networking, Auth, Accounts)
+        run: COVERAGE_MD=coverage.md bash scripts/run_package_tests.sh
+      - name: Coverage summary
+        if: always()
+        run: cat coverage.md >> "$GITHUB_STEP_SUMMARY" || true
+
+  packages-linux:
+    name: packages-linux
+    runs-on: ubuntu-latest
+    container: swift:6.1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift package tests on Linux (the logic is platform-independent)
+        # Accounts and Transfers use @Observable, and Swift's Linux toolchain has a bug linking
+        # libswiftObservation (undefined swift::threading::fatal). They're fully tested on macOS above.
         run: |
-          for p in Packages/*/; do
-            if [ -d "$p/Tests" ]; then
-              echo "::group::$p"
-              (cd "$p" && swift test)
-              echo "::endgroup::"
-            fi
+          for p in Core Networking Auth; do
+            echo "::group::$p"
+            (cd "Packages/$p" && swift test -Xlinker --allow-shlib-undefined) || exit 1
+            echo "::endgroup::"
           done
 
   app:
@@ -25,13 +41,37 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install XcodeGen
-        run: brew install xcodegen
+      - name: Install tools
+        run: brew install xcodegen swiftlint
+      - name: Lint
+        run: swiftlint lint --reporter github-actions-logging
       - name: Generate Xcode project
         run: xcodegen generate
-      - name: Build for iOS Simulator
+      - name: Pick a simulator
+        id: sim
+        run: |
+          name="$(xcrun simctl list devices available | grep -m1 -oE 'iPhone [0-9][^(]*' | sed 's/ *$//')"
+          echo "Using: $name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+      - name: Build and run UI tests
         run: |
           set -o pipefail
-          xcodebuild build -project MapleWallet.xcodeproj -scheme MapleWallet \
-            -destination 'generic/platform=iOS Simulator' \
-            CODE_SIGNING_ALLOWED=NO | tail -50
+          xcodebuild test -project MapleWallet.xcodeproj -scheme MapleWallet \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}" \
+            -resultBundlePath TestResults.xcresult \
+            -skip-testing:MapleWalletUITests/ScreenshotTests \
+            -skip-testing:MapleWalletUITests/DemoRecordingTests \
+            CODE_SIGNING_ALLOWED=NO | tail -100
+      - name: Coverage report
+        if: always()
+        run: |
+          xcrun xccov view --report --json TestResults.xcresult > coverage.json || true
+          python3 scripts/check_coverage.py xccov coverage.json --targets MapleWallet --min 0 || true
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            TestResults.xcresult
+            coverage.json

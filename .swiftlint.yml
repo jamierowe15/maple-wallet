@@ -1,0 +1,23 @@
+included:
+  - App
+  - Packages
+  - Widget
+  - UITests
+excluded:
+  - Packages/*/.build
+disabled_rules:
+  - trailing_comma
+  - todo           # TODO(Day N) markers are intentional during the lab
+opt_in_rules:
+  - empty_count
+  - first_where
+  - closure_spacing
+  - redundant_nil_coalescing
+line_length:
+  warning: 140
+  error: 200
+identifier_name:
+  min_length: 2
+  excluded: [id, to, s, m, l]
+type_body_length:
+  warning: 300

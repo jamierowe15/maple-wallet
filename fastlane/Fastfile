@@ -1,0 +1,37 @@
+default_platform(:ios)
+
+platform :ios do
+  before_all do
+    sh("cd .. && xcodegen generate")
+  end
+
+  desc "Unit + UI tests with coverage"
+  lane :test do
+    run_tests(
+      project: "MapleWallet.xcodeproj",
+      scheme: "MapleWallet",
+      device: ENV.fetch("SIM_DEVICE", "iPhone 16"),
+      code_coverage: true,
+      result_bundle: true,
+      output_types: "html,junit"
+    )
+  end
+
+  desc "Light, dark, AX5 and iPad screenshots (UITests/ScreenshotTests via simctl)"
+  lane :screenshots do
+    sh("cd .. && bash scripts/ci/evidence.sh shots")
+  end
+
+  desc "Everything: screenshots, GIF recordings, accessibility audit, coverage, Instruments traces"
+  lane :evidence do
+    sh("cd .. && bash scripts/ci/evidence.sh all")
+  end
+
+  desc "Build and upload to TestFlight (needs a paid Apple Developer account)"
+  lane :beta do
+    key = ENV["APP_STORE_CONNECT_API_KEY_PATH"]
+    UI.user_error!("Set APP_STORE_CONNECT_API_KEY_PATH first (paid account needed)") unless key
+    build_app(project: "MapleWallet.xcodeproj", scheme: "MapleWallet", export_method: "app-store")
+    upload_to_testflight(api_key_path: key, skip_waiting_for_build_processing: true)
+  end
+end
