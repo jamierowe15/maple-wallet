@@ -9,7 +9,8 @@ extension TransactionRow {
             merchant: transaction.merchant,
             detail: "\(transaction.category), \(transaction.date.formatted(date: .abbreviated, time: .omitted))",
             amount: transaction.isCredit ? "+\(formatted)" : formatted,
-            isCredit: transaction.isCredit
+            isCredit: transaction.isCredit,
+            spokenAmount: transaction.amount.spokenDescription()
         )
     }
 }

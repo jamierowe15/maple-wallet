@@ -1,0 +1,11 @@
+{
+  "Simulator Target Bundle": "com.jamierowe.maplewallet",
+  "aps": {
+    "alert": {
+      "title": "Transfer received",
+      "body": "You received $25.00 from Sam."
+    },
+    "sound": "default"
+  },
+  "deepLink": "maplewallet://accounts/chq-001/transactions/t-100"
+}

@@ -1,11 +1,17 @@
 import Auth
 import DesignSystem
 import SwiftUI
+import UserNotifications
 
 struct MoreView: View {
     let session: SessionModel
     let tokenProvider: TokenProvider
+    @Bindable var appLock: AppLock
     @State private var showHelp = false
+    @State private var notificationsStatus = "Not asked yet"
+    #if DEBUG
+    @State private var currentToken = ""
+    #endif
 
     var body: some View {
         NavigationStack {
@@ -18,18 +24,50 @@ struct MoreView: View {
                     NavigationLink("Top up with Apple Pay") { TopUpView() }
                     NavigationLink("Deposit a cheque") { DepositChequeView() }
                 }
+                Section("Security") {
+                    Toggle("Require Face ID to open", isOn: $appLock.isEnabled)
+                        .accessibilityIdentifier("more.faceIDToggle")
+                }
+                Section("Notifications") {
+                    Button("Turn on transfer alerts") {
+                        Task {
+                            let granted = (try? await UNUserNotificationCenter.current()
+                                .requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+                            notificationsStatus = granted ? "On" : "Off. You can change this in Settings."
+                        }
+                    }
+                    LabeledContent("Status", value: notificationsStatus)
+                }
+                #if DEBUG
+                Section("Debug") {
+                    LabeledContent("Access token", value: currentToken)
+                        .accessibilityIdentifier("debug.tokenLabel")
+                    Button("Check token") { Task { await refreshTokenLabel() } }
+                        .accessibilityIdentifier("debug.checkToken")
+                }
+                #endif
                 Section {
                     Button("Sign out", role: .destructive) { Task { await session.signOut() } }
                         .accessibilityIdentifier("more.signOut")
                 }
             }
             .navigationTitle("More")
+            #if DEBUG
+            .task { await refreshTokenLabel() }
+            #endif
             .sheet(isPresented: $showHelp) {
                 SafariView(url: URL(string: "https://support.apple.com/accessibility")!)
                     .ignoresSafeArea()
             }
         }
     }
+
+    #if DEBUG
+    /// Shows which token the app is using, so a silent refresh is visible in demos.
+    private func refreshTokenLabel() async {
+        currentToken = (try? await tokenProvider.validToken()) ?? "signed out"
+    }
+    #endif
 }
 
 struct StatementsScreen: View {

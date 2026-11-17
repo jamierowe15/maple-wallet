@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.com.jamierowe.maplewallet"],
+        "components": [
+          { "/": "/accounts/*", "comment": "Account and transaction links" },
+          { "/": "/transfer", "comment": "Start a transfer" }
+        ]
+      }
+    ]
+  }
+}

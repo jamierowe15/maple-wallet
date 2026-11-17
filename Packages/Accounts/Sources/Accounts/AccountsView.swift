@@ -3,41 +3,52 @@ import Core
 import DesignSystem
 import SwiftUI
 
-struct AccountRoute: Hashable {
-    let id: Account.ID
-}
-
+/// iPad: accounts list and detail side by side. iPhone: collapses to a stack.
 public struct AccountsView: View {
     @State private var viewModel: AccountsViewModel
+    @Binding private var selection: Account.ID?
     private let makeDetailViewModel: @MainActor (Account.ID) -> AccountDetailViewModel
+    private let onRepeatTransfer: @MainActor (Transaction) -> Void
     #if DEBUG
     @AppStorage("simulateOffline") private var simulateOffline = false
     #endif
 
     public init(viewModel: AccountsViewModel,
-                makeDetailViewModel: @escaping @MainActor (Account.ID) -> AccountDetailViewModel) {
+                selection: Binding<Account.ID?>,
+                makeDetailViewModel: @escaping @MainActor (Account.ID) -> AccountDetailViewModel,
+                onRepeatTransfer: @escaping @MainActor (Transaction) -> Void) {
         _viewModel = State(initialValue: viewModel)
+        _selection = selection
         self.makeDetailViewModel = makeDetailViewModel
+        self.onRepeatTransfer = onRepeatTransfer
     }
 
     public var body: some View {
-        NavigationStack {
-            content
+        NavigationSplitView {
+            sidebar
                 .navigationTitle("Accounts")
-                .navigationDestination(for: AccountRoute.self) { route in
-                    AccountDetailView(viewModel: makeDetailViewModel(route.id))
-                }
                 #if DEBUG
                 .toolbar {
                     Toggle(isOn: $simulateOffline) { Label("Simulate offline", systemImage: "wifi.slash") }
                         .accessibilityHint("Debug only. Makes the fake server act offline.")
+                        .accessibilityIdentifier("debug.offlineToggle")
                 }
                 #endif
+        } detail: {
+            if let selection {
+                NavigationStack {
+                    AccountDetailView(viewModel: makeDetailViewModel(selection), onRepeatTransfer: onRepeatTransfer)
+                }
+                .id(selection)
+            } else {
+                EmptyStateView(title: "Choose an account", message: "Pick an account to see its activity.",
+                               systemImage: "sidebar.left")
+            }
         }
         .task { await viewModel.load() }
     }
 
-    @ViewBuilder private var content: some View {
+    @ViewBuilder private var sidebar: some View {
         switch viewModel.state {
         case .idle, .loading:
             ProgressView("Loading accounts")
@@ -50,22 +61,24 @@ public struct AccountsView: View {
                 Task { await viewModel.load() }
             }
         case .loaded(let accounts):
-            List {
+            List(selection: $selection) {
                 if let lastUpdated = viewModel.lastUpdated {
                     Label("Offline. Showing balances from \(lastUpdated.formatted(date: .omitted, time: .shortened)).",
                           systemImage: "wifi.slash")
                         .font(.footnote)
                         .foregroundStyle(Palette.textSecondary)
                         .listRowSeparator(.hidden)
+                        .accessibilityIdentifier("accounts.offlineBanner")
                 }
                 ForEach(accounts) { account in
-                    NavigationLink(value: AccountRoute(id: account.id)) {
-                        BalanceCard(title: account.name,
-                                    subtitle: "\(account.kind.rawValue.capitalized), ending in \(account.lastFour)",
-                                    balance: account.balance.formatted())
-                    }
-                    .listRowSeparator(.hidden)
-                    .accessibilityIdentifier("accounts.row.\(account.id)")
+                    BalanceCard(title: account.name,
+                                subtitle: "\(account.kind.rawValue.capitalized), ending in \(account.lastFour)",
+                                balance: account.balance.formatted(),
+                                spokenBalance: account.balance.spokenDescription())
+                        .tag(account.id)
+                        .listRowSeparator(.hidden)
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityIdentifier("accounts.row.\(account.id)")
                 }
             }
             .listStyle(.plain)
