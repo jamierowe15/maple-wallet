@@ -3,7 +3,7 @@
 ## Automated audit (Xcode accessibility audit on every main screen)
 `AccessibilityAuditTests` runs `XCUIApplication.performAccessibilityAudit()` on Sign in, Accounts, Account detail, Transfer and More, the same checks as Accessibility Inspector's audit.
 <!-- auto:a11y-audit -->
-_Not generated yet. Run `bash maple-wallet-lab.sh evidence`._
+_Generated automatically by `bash maple-wallet-lab.sh evidence` (runs on GitHub's Macs)._
 <!-- /auto:a11y-audit -->
 
 ## Built in

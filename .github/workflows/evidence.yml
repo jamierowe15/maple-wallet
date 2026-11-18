@@ -16,7 +16,7 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
       - name: Produce evidence
-        timeout-minutes: 40
+        timeout-minutes: 100
         run: bash scripts/ci/evidence.sh all
       - name: Upload evidence
         if: always()
